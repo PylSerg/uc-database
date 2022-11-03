@@ -6,6 +6,7 @@ export default function Main() {
 	const [newUser, setNewUser] = useState("");
 	const [editableUser, setEditableUser] = useState({ id: null, name: "" });
 	const [extraUser, setExtraUser] = useState("");
+	const [message, setMessage] = useState("Loading users list...");
 
 	const BASE_URL = "https://script.google.com/macros/s/AKfycbymV2xWA7SI27-MM8t6xPsf5v6GXmniaVLYBA4THSOb3LCSN0n0GrOqqFy99_T5hoCM/exec";
 
@@ -27,6 +28,7 @@ export default function Main() {
 			.catch(error => console.log(error));
 
 		setUsersList({ refresh: false, data: request.data.data });
+		setMessage("");
 	}
 
 	/*
@@ -47,8 +49,6 @@ export default function Main() {
 
 	// Edits user
 	async function editUserAtDatabase() {
-		if (editableUser.name === "") return;
-
 		console.log(`\x1b[33m Editing user...`);
 
 		await axios
@@ -57,7 +57,6 @@ export default function Main() {
 			.catch(error => console.log(error));
 
 		setUsersList({ ...usersList, refresh: true });
-		setEditableUser();
 	}
 
 	// Deletes user
@@ -85,6 +84,7 @@ export default function Main() {
 
 	function addUser() {
 		setNewUser("");
+		setMessage("Adding new user...");
 		addNewUserToDatabase();
 	}
 
@@ -99,13 +99,28 @@ export default function Main() {
 		}
 	}
 
+	function saveChanges() {
+		if (editableUser.name === "") return;
+
+		editUserAtDatabase();
+		setEditableUser();
+		setMessage("Saving changes...");
+	}
+
 	function deleteUser() {
 		setExtraUser("");
 		deleteUserFromDatabase();
+		setMessage("Deleting user...");
 	}
 
 	return (
 		<div>
+			{message && (
+				<div className="modal-message">
+					<p className="message">{message}</p>
+				</div>
+			)}
+
 			<div className="control-block">
 				<div className="control-field">
 					<input type="text" value={newUser} onChange={changeNewUser} />
@@ -131,12 +146,7 @@ export default function Main() {
 						<th>id</th>
 						<th>name</th>
 					</tr>
-					{!usersList.data && (
-						<tr>
-							<td></td>
-							<td>Loading...</td>
-						</tr>
-					)}
+
 					{usersList.data &&
 						usersList.data.map(user => (
 							<tr key={user.id}>
@@ -144,7 +154,7 @@ export default function Main() {
 									<b>{user.id}</b>
 								</td>
 								<td>
-									<input type="text" id={user.id} value={user.name} onChange={editUser} onBlur={editUserAtDatabase} />
+									<input type="text" id={user.id} value={user.name} onChange={editUser} onBlur={saveChanges} />
 								</td>
 							</tr>
 						))}
