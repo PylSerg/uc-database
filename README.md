@@ -6,7 +6,7 @@
 
 <h5>Code in Apps Script:</h5>
 
-<p>
+<pre>
 /* 
   POST request
 */
@@ -93,4 +93,4 @@ for (let i = 2; i <= lastRow; i++) { result.data.push({id: sheet.getRange(`A${i}
 
 return result }
 
-</p>
+</pre>
