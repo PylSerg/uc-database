@@ -139,7 +139,12 @@ export default function Main() {
 				</div>
 			</div>
 
+			<a href="https://docs.google.com/spreadsheets/d/1WKyhPK1pvySJSImA5TYMedz5HJySDvorV-_jAIaaW3A/edit#gid=0" target="_blank" rel="noreferrer">
+				Go to Google sheet
+			</a>
+
 			<h3>Users List:</h3>
+
 			<table>
 				<tbody>
 					<tr>
