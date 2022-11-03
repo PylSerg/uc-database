@@ -2,26 +2,77 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Main() {
-	const [usersList, setUsersList] = useState();
+	const [usersList, setUsersList] = useState({ refresh: false, data: null });
 	const [newUser, setNewUser] = useState("");
+	const [editableUser, setEditableUser] = useState({ id: null, name: "" });
 	const [extraUser, setExtraUser] = useState("");
 
-	const BASE_URL = "https://script.google.com/macros/s/AKfycbxqid34_IMl-iMPjoWZ4qju4l8h6byz5-ScmuYNmJGTH6_pT668kg8AC9oFNiwDvXQS/exec";
+	const BASE_URL = "https://script.google.com/macros/s/AKfycbymV2xWA7SI27-MM8t6xPsf5v6GXmniaVLYBA4THSOb3LCSN0n0GrOqqFy99_T5hoCM/exec";
 
 	useEffect(() => {
-		getRequest();
-	}, [usersList]);
+		getAllUsers();
 
-	async function getRequest() {
-		const request = await axios.get(`${BASE_URL}?id=all`);
+		console.log(`\x1b[32m All users have been loaded`);
+	}, [usersList.refresh]);
 
-		setUsersList(request.data.data);
+	/* 
+		GET request 
+	*/
+	async function getAllUsers() {
+		console.log(`\x1b[33m Getting all users...`);
+
+		const request = await axios
+			.get(`${BASE_URL}?id=all`)
+			.then(console.log(`\x1b[32m Status: 200 OK`))
+			.catch(error => console.log(error));
+
+		setUsersList({ refresh: false, data: request.data.data });
 	}
 
-	async function postRequest(r = false) {
-		await axios.post(`${BASE_URL}?name=${newUser}${extraUser}&remove=${r}`);
+	/*
+		POST requests
+	*/
+
+	// Adds user
+	async function addNewUserToDatabase() {
+		console.log(`\x1b[33m Adding new user...`);
+
+		await axios
+			.post(`${BASE_URL}?name=${newUser}`)
+			.then(console.log(`\x1b[32m Status: 200 OK`))
+			.catch(error => console.log(error));
+
+		setUsersList({ ...usersList, refresh: true });
 	}
 
+	// Edits user
+	async function editUserAtDatabase() {
+		console.log(`\x1b[33m Editing user...`);
+
+		await axios
+			.post(`${BASE_URL}?id=${editableUser.id}&name=${editableUser.name}&edit=true`)
+			.then(console.log(`\x1b[32m Status: 200 OK`))
+			.catch(error => console.log(error));
+
+		setUsersList({ ...usersList, refresh: true });
+		setEditableUser();
+	}
+
+	// Deletes user
+	async function deleteUserFromDatabase() {
+		console.log(`\x1b[33m Deleting user...`);
+
+		await axios
+			.post(`${BASE_URL}?name=${extraUser}&remove=true`)
+			.then(console.log(`\x1b[32m Status: 200 OK`))
+			.catch(error => console.log(error));
+
+		setUsersList({ ...usersList, refresh: true });
+	}
+
+	/*
+		Other functions
+	*/
 	function changeNewUser(e) {
 		setNewUser(e.currentTarget.value);
 	}
@@ -32,29 +83,58 @@ export default function Main() {
 
 	function addUser() {
 		setNewUser("");
-		postRequest();
-		setUsersList();
+		addNewUserToDatabase();
+	}
+
+	function editUser(e) {
+		const id = Number(e.currentTarget.id);
+
+		for (let i = 0; i < usersList.data.length; i++) {
+			if (usersList.data[i].id === id) {
+				usersList.data[i].name = e.currentTarget.value;
+				setEditableUser({ id: usersList.data[i].id, name: e.currentTarget.value });
+			}
+		}
 	}
 
 	function deleteUser() {
 		setExtraUser("");
-		postRequest(true);
-		setUsersList();
+		deleteUserFromDatabase();
 	}
 
 	return (
 		<div>
-			<ul>
-				<u>Users List:</u>
-				{usersList && usersList.map(user => <li>{user}</li>)}
-			</ul>
+			<h3>Users List:</h3>
+			<table>
+				<tbody>
+					<tr>
+						<th>id</th>
+						<th>name</th>
+					</tr>
+					{!usersList.data && (
+						<tr>
+							<td></td>
+							<td>Loading...</td>
+						</tr>
+					)}
+					{usersList.data &&
+						usersList.data.map(user => (
+							<tr key={user.id}>
+								<td>{user.id}</td>
+								<td>
+									<input type="text" id={user.id} value={user.name} onChange={editUser} onBlur={editUserAtDatabase} />
+								</td>
+							</tr>
+						))}
+				</tbody>
+			</table>
 
 			<br />
 
 			<input type="text" value={newUser} onChange={changeNewUser} />
 
 			<button type="button" onClick={addUser}>
-				POST
+				Add
 			</button>
 
 			<br />
