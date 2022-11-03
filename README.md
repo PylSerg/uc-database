@@ -4,4 +4,4 @@
 
 <hr/>
 
-<h6>Code in Apps Script:</h6>
+<h5>Code in Apps Script:</h5>
