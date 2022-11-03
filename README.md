@@ -46,8 +46,8 @@ function doPost(requst) {
     }
 
     // Edits user 
-        if (edit === 'true') { 
-            editUser()
+    if (edit === 'true') { 
+        editUser()
 
         function editUser() {
             for (let i = 2; i < lastRow + 1; i++) {
