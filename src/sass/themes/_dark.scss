@@ -1,4 +1,60 @@
+input {
+    padding: 5px 15px;
+
+    color: #ccc;
+    font-size: 18px;
+    font-family: Arial;
+
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+}
+
+td {
+    padding: 15px 5px;
+
+    text-align: right;
+}
+
+button {
+    width: 100px;
+
+    padding: 5px 15px;
+
+    color: #fff;
+    font-size: 18px;
+
+    background-color: #0f55bd;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+
+    cursor: pointer;
+}
+
 .container--dark {
     background-color: #1c1c1c;
     color: #ccc;
+}
+
+.control-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+
+.control-field {
+    &:last-child {
+        margin-left: 50px;
+    }
+
+    & input {
+        border-radius: 15px 0 0 15px;
+    }
+
+    & button {
+        border-radius: 0 15px 15px 0;
+    }
 }

@@ -47,6 +47,8 @@ export default function Main() {
 
 	// Edits user
 	async function editUserAtDatabase() {
+		if (editableUser.name === "") return;
+
 		console.log(`\x1b[33m Editing user...`);
 
 		await axios
@@ -104,6 +106,24 @@ export default function Main() {
 
 	return (
 		<div>
+			<div className="control-block">
+				<div className="control-field">
+					<input type="text" value={newUser} onChange={changeNewUser} />
+
+					<button type="button" onClick={addUser}>
+						Add
+					</button>
+				</div>
+
+				<div className="control-field">
+					<input type="text" value={extraUser} onChange={changeExtraUser} />
+
+					<button type="button" onClick={deleteUser}>
+						Delete
+					</button>
+				</div>
+			</div>
+
 			<h3>Users List:</h3>
 			<table>
 				<tbody>
@@ -120,7 +140,9 @@ export default function Main() {
 					{usersList.data &&
 						usersList.data.map(user => (
 							<tr key={user.id}>
-								<td>{user.id}</td>
+								<td>
+									<b>{user.id}</b>
+								</td>
 								<td>
 									<input type="text" id={user.id} value={user.name} onChange={editUser} onBlur={editUserAtDatabase} />
 								</td>
@@ -128,23 +150,6 @@ export default function Main() {
 						))}
 				</tbody>
 			</table>
-
-			<br />
-
-			<input type="text" value={newUser} onChange={changeNewUser} />
-
-			<button type="button" onClick={addUser}>
-				Add
-			</button>
-
-			<br />
-			<br />
-
-			<input type="text" value={extraUser} onChange={changeExtraUser} />
-
-			<button type="button" onClick={deleteUser}>
-				Delete
-			</button>
 		</div>
 	);
 }
