@@ -106,7 +106,11 @@ function getRresult({id, name}) {
 
         if (userId == id) {
             result = {...result, data: {id: userId, name: userName}}
+            
+            return result
         }
+        
+        result = {...result, data: {id: userId, name: userName}}
     }
 
     return result 
